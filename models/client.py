@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from models import ClientBike
+    from models import Sale
 
 class Client(Base):
     __tablename__ = "clients"
@@ -15,6 +16,7 @@ class Client(Base):
     email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
 
     bikes: Mapped[list["ClientBike"]] = relationship("ClientBike", back_populates="client")
+    sales: Mapped[list["Sale"]] = relationship("Sale", back_populates="client")
 
     def __repr__(self):
         return f"Client(id={self.id}, last_name={self.last_name}, first_name={self.first_name}, phone={self.phone}, email={self.email})"

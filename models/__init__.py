@@ -2,3 +2,5 @@ from models.client import Client
 from models.client_bike import ClientBike
 from models.sale import SaleLineBike
 from models.sale import SaleLinePart
+from models.inventory_bike import InventoryBike
+from models.spare_part import SparePart
