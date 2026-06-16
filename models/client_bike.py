@@ -18,6 +18,7 @@ class ClientBike(Base):
     serial_number: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True)
 
     client: Mapped["Client"] = relationship("Client", back_populates="bikes")
-    
+    repair_orders: Mapped[list["RepairOrder"]] = relationship("RepairOrder", back_populates="client_bike")
+
     def __repr__(self):
         return f"ClientBike(id={self.id}, client_id={self.client_id}, type={self.type}, color={self.color})"

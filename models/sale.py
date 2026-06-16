@@ -1,20 +1,18 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Identity, Integer, ForeignKey
+from sqlalchemy import Identity, Integer, ForeignKey, DateTime
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import InventoryBike
-    from models import SparePart
-    from models import Client
+    from models import InventoryBike, SparePart, Client
 
 class Sale(Base):
     __tablename__ = "sales"
 
     id: Mapped[int] = mapped_column(Identity(always=True), primary_key=True)
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
-    sale_date: Mapped[datetime] = mapped_column(nullable=False, default=lambda: datetime.now(timezone.utc))
+    sale_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     client: Mapped["Client"] = relationship("Client", back_populates="sales")
     sale_lines_bikes: Mapped[list["SaleLineBike"]] = relationship("SaleLineBike", back_populates="sale")

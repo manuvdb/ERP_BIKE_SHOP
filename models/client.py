@@ -4,8 +4,7 @@ from sqlalchemy import Identity, String
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import ClientBike
-    from models import Sale
+    from models import ClientBike, Sale
 
 class Client(Base):
     __tablename__ = "clients"

@@ -5,7 +5,7 @@ from db.database import Base
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import SaleLinePart
+    from models import SaleLinePart, RepairOrderPart
 
 class SparePart(Base):
     __tablename__ = "spare_parts"
@@ -19,6 +19,7 @@ class SparePart(Base):
     quantity_in_stock: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     sale_lines: Mapped[list["SaleLinePart"]] = relationship("SaleLinePart", back_populates="spare_part")
+    repair_lines: Mapped[list["RepairOrderPart"]] = relationship("RepairOrderPart", back_populates="spare_part")
 
     def __repr__(self):
         return f"SparePart(id={self.id}, name={self.name}, category={self.category})"
