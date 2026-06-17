@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import InventoryBike, SparePart, Client
+    from models import InventoryBike, SparePart, Client, Invoice
 
 class Sale(Base):
     __tablename__ = "sales"

@@ -4,7 +4,7 @@ from db.database import Base
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import Client
+    from models import Client, RepairOrder
 
 class ClientBike(Base):
     __tablename__ = "client_bikes"

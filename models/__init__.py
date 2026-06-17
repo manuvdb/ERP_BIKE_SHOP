@@ -4,3 +4,7 @@ from models.sale import SaleLineBike
 from models.sale import SaleLinePart
 from models.inventory_bike import InventoryBike
 from models.spare_part import SparePart
+from models.repair import RepairOrder
+from models.repair import RepairOrderPart
+from models.invoice import Invoice
+from models.invoice import InvoiceLine

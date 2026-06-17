@@ -6,7 +6,7 @@ from db.database import Base
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models import RepairOrderPart, ClientBike, SparePart
+    from models import RepairOrderPart, ClientBike, SparePart, Invoice
 
 class RepairOrder(Base):
     __tablename__ = "repair_orders"
