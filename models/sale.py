@@ -1,6 +1,6 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Identity, Integer, ForeignKey, DateTime
+from sqlalchemy import Identity, Integer, ForeignKey, DateTime, CheckConstraint
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
@@ -32,6 +32,10 @@ class SaleLineBike(Base):
     sale: Mapped["Sale"] = relationship("Sale", back_populates="sale_lines_bikes")
     bike: Mapped["InventoryBike"] = relationship("InventoryBike", back_populates="sale_lines")
 
+    __table_args__ = (
+        CheckConstraint("quantity_sold > 0", name="ck_sale_line_bike_quantity_positive"),
+    )
+    
     def __repr__(self):
         return f"SaleLineBike(id={self.id}, sale_id={self.sale_id}, bike_inventory_id={self.bike_inventory_id}, quantity_sold={self.quantity_sold})"
 
@@ -45,6 +49,10 @@ class SaleLinePart(Base):
 
     sale: Mapped["Sale"] = relationship("Sale", back_populates="sale_lines_parts")
     spare_part: Mapped["SparePart"] = relationship("SparePart", back_populates="sale_lines")
+
+    __table_args__ = (
+        CheckConstraint("quantity_sold > 0", name="ck_sale_line_part_quantity_positive"),
+    )
 
     def __repr__(self):
         return f"SaleLinePart(id={self.id}, sale_id={self.sale_id}, spare_part_id={self.spare_part_id}, quantity_sold={self.quantity_sold})"
