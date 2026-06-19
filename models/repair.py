@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Identity, String, Numeric, Integer, DateTime
+from sqlalchemy import ForeignKey, Identity, String, Numeric, Integer, DateTime, CheckConstraint
 from decimal import Decimal
 from datetime import datetime, timezone
 from db.database import Base
@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from models import RepairOrderPart, ClientBike, SparePart, Invoice
+
 
 class RepairOrder(Base):
     __tablename__ = "repair_orders"
@@ -23,9 +24,23 @@ class RepairOrder(Base):
     client_bike: Mapped["ClientBike"] = relationship("ClientBike", back_populates="repair_orders")
     repair_order_parts: Mapped[list["RepairOrderPart"]] = relationship("RepairOrderPart", back_populates="repair_order")
 
+    __table_args__ = (
+        CheckConstraint("labor_hours >= 0", name="ck_repair_order_labor_hours_non_negative"),
+        CheckConstraint("labor_hourly_rate >= 0", name="ck_repair_order_labor_rate_non_negative"),
+        CheckConstraint(
+            "quote_status IN ('pending', 'accepted', 'rejected')",
+            name="ck_repair_order_quote_status_valid",
+        ),
+        CheckConstraint(
+            "repair_status IN ('to do', 'in progress', 'done', 'cancelled')",
+            name="ck_repair_order_repair_status_valid",
+        ),
+    )
+
     def __repr__(self):
-        return f"RepairOrder(id={self.id}, client_id={self.client_bike_id}, quote_status={self.quote_status}, repair_status={self.repair_status})"
-    
+        return f"RepairOrder(id={self.id}, client_bike_id={self.client_bike_id}, quote_status={self.quote_status}, repair_status={self.repair_status})"
+
+
 class RepairOrderPart(Base):
     __tablename__ = "repair_order_parts"
 
@@ -36,6 +51,10 @@ class RepairOrderPart(Base):
 
     repair_order: Mapped["RepairOrder"] = relationship("RepairOrder", back_populates="repair_order_parts")
     spare_part: Mapped["SparePart"] = relationship("SparePart", back_populates="repair_lines")
+
+    __table_args__ = (
+        CheckConstraint("quantity_used > 0", name="ck_repair_order_part_quantity_positive"),
+    )
 
     def __repr__(self):
         return f"RepairOrderPart(id={self.id}, repair_order_id={self.repair_order_id}, spare_part_id={self.spare_part_id}, quantity_used={self.quantity_used})"
