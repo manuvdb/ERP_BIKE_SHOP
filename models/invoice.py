@@ -64,6 +64,19 @@ class InvoiceLine(Base):
 
     invoice: Mapped["Invoice"] = relationship("Invoice", back_populates="invoice_lines")
 
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="ck_invoice_line_quantity_positive"),
+        CheckConstraint(
+            "article_type IN ('inventory_bike', 'spare_part')",
+            name="ck_invoice_line_article_type_valid",
+        ),
+        CheckConstraint(
+            "origin_type IN ('sale', 'repair_order')",
+            name="ck_invoice_line_origin_type_valid",
+        ),
+    )
+
+
     def __repr__(self):
         return (
             f"InvoiceLine(id={self.id}, invoice_id={self.invoice_id}, "
