@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Identity, String, Numeric, Integer
+from sqlalchemy import ForeignKey, Identity, String, Numeric, Integer, CheckConstraint
 from decimal import Decimal
 from db.database import Base
 from typing import TYPE_CHECKING
@@ -20,6 +20,12 @@ class SparePart(Base):
 
     sale_lines: Mapped[list["SaleLinePart"]] = relationship("SaleLinePart", back_populates="spare_part")
     repair_lines: Mapped[list["RepairOrderPart"]] = relationship("RepairOrderPart", back_populates="spare_part")
+
+    __table_args__ = (
+        CheckConstraint("quantity_in_stock >= 0", name="ck_inventory_bike_stock_non_negative"),
+        CheckConstraint("purchase_price_net >= 0", name="ck_inventory_bike_purchase_price_non_negative"),
+        CheckConstraint("retail_price_net >= 0", name="ck_inventory_bike_retail_price_non_negative"),
+    )
 
     def __repr__(self):
         return f"SparePart(id={self.id}, name={self.name}, category={self.category})"

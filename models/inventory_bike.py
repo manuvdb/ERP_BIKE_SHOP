@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey, Identity, Numeric, Integer
+from sqlalchemy import String, ForeignKey, Identity, Numeric, Integer, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from decimal import Decimal
 from db.database import Base
@@ -23,6 +23,13 @@ class InventoryBike(Base):
     frame_number: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True)
 
     sale_lines: Mapped[list["SaleLineBike"]] = relationship("SaleLineBike", back_populates="bike")
+
+    __table_args__ = (
+        CheckConstraint("quantity_in_stock >= 0", name="ck_inventory_bike_stock_non_negative"),
+        CheckConstraint("purchase_price_net >= 0", name="ck_inventory_bike_purchase_price_non_negative"),
+        CheckConstraint("retail_price_net >= 0", name="ck_inventory_bike_retail_price_non_negative"),
+    )
+
 
     def __repr__(self):
         return f"InventoryBike(id={self.id}, type={self.type}, color={self.color})"

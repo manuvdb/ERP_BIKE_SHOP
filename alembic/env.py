@@ -86,8 +86,12 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+    connection=connection,
+    target_metadata=target_metadata,
+    compare_type=True,
+    compare_server_default=True,  # 🟢 Active la vérification approfondie des contraintes et valeurs par défaut
+)
+
 
         with context.begin_transaction():
             context.run_migrations()
