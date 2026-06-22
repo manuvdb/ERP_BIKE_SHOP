@@ -1,1 +1,1 @@
-from repositories import ClientRepository
+from .client_repository import ClientRepository

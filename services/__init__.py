@@ -1,1 +1,1 @@
-from client_service import ClientService
+from .client_service import ClientService
