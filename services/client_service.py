@@ -4,6 +4,9 @@ from repositories.client_repository import ClientRepository
 
 class ClientService:
 
+    def __init__(self):
+        self.repository = ClientRepository()
+
     def create_client(
             self, 
             session: Session,
@@ -13,10 +16,10 @@ class ClientService:
             email: str 
             ) -> Client:
         
-        if ClientRepository.get_by_email(session, email) is not None:
+        if self.repository.get_by_email(session, email) is not None:
             raise ValueError(f"Un client avec l'email {email} existe déjà !")
         
-        if ClientRepository.get_by_phone(session, phone) is not None:
+        if self.repository.get_by_phone(session, phone) is not None:
             raise ValueError(f"Un client avec le numéro {phone} existe déjà !")
         
         client = Client(
@@ -26,16 +29,16 @@ class ClientService:
             email=email.strip().lower(),
         )
 
-        return ClientRepository.create(session, client)
+        return self.repository.create(session, client)
     
     def get_client(self, session: Session, client_id: int) -> Client:
-        client = ClientRepository.get_by_id(session, client_id)
+        client = self.repository.get_by_id(session, client_id)
         if client is None:
-            raise ValueError(f"Aucun client avec l'id {client_id} n'existe pas !")
+            raise ValueError(f"Aucun client avec l'id {client_id} n'existe !")
         return client
     
     def list_clients(self, session: Session, skip: int, limit: int) -> list[Client]:
-        return ClientRepository.get_all(session, skip=skip, limit=limit)
+        return self.repository.get_all(session, skip=skip, limit=limit)
     
     def update_client(
             self, 
@@ -44,19 +47,19 @@ class ClientService:
             first_name: str,
             last_name: str,
             phone: str,
-            email, str
+            email: str
             ) -> Client:
         
         client = self.get_client(session, client_id)
 
         if email is not None and email.strip().lower() != client.email:
-            existing = ClientRepository.get_by_email(session, email.strip().lower())
+            existing = self.repository.get_by_email(session, email.strip().lower())
             if existing is not None and existing.id != client_id:
                 raise ValueError(f"Un client avec l'email {email} existe déjà !")
             client.email = email.strip().lower()
         
         if phone is not None and phone.strip() != client.phone:
-            existing = ClientRepository.get_by_phone(session, phone.strip())
+            existing = self.repository.get_by_phone(session, phone.strip())
             if existing is not None and existing.id != client_id:
                 raise ValueError(f"Un client avec le téléphone '{phone}' existe déjà.")
             client.phone = phone.strip()
@@ -67,8 +70,8 @@ class ClientService:
         if last_name is not None:
             client.last_name = last_name.strip()
 
-        return ClientRepository.update(session, client)
+        return self.repository.update(session, client)
     
     def delete_client(self, session: Session, client_id: int) -> None:
         client = self.get_client(session, client_id)
-        ClientRepository.delete(session, client)
+        self.repository.delete(session, client)
